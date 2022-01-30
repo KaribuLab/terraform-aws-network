@@ -1,0 +1,7 @@
+.history
+.env
+terraform.tfvars
+.terraform
+terraform.tfstate.backup
+terraform.tfstate*
+.terraform.tfstate.lock.info
