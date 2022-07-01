@@ -17,3 +17,7 @@ output "subnet_public_id" {
   value       = aws_subnet.public[*].id
   description = "Private Subnet ID by region and availability zone"
 }
+
+output "vpc_az_names" {
+  value = var.subnet_private.subnets[*].az
+}
