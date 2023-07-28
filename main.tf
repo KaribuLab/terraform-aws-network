@@ -3,7 +3,7 @@
 # ============================================================
 
 terraform {
-  backend s3 { }
+  backend s3 {}
   
   provider_versions {
     aws = "5.10.0"
