@@ -3,7 +3,9 @@
 # ============================================================
 
 terraform {
-  backend "s3" {}
+  provider_versions {
+    aws = "5.10.0"
+  }
 }
 
 # ============================================================
@@ -12,7 +14,7 @@ terraform {
 
 resource "aws_vpc" "network" {
   cidr_block = var.vpc_cidr
-  tags       = var.common_tags
+  tags       = var.tags
   enable_dns_hostnames = true
   enable_dns_support =  true
 }
@@ -24,9 +26,9 @@ resource "aws_vpc" "network" {
 resource "aws_internet_gateway" "gateway" {
   vpc_id = aws_vpc.network.id
   tags = merge(
-    var.common_tags,
+    var.tags,
     {
-      Name = "${var.common_tags.customer} Network ${var.common_tags.environment}"
+      Name = "${var.customer} Network ${var.environment}"
     }
   )
 }
@@ -37,11 +39,11 @@ resource "aws_internet_gateway" "gateway" {
 
 resource "aws_eip" "nat_ip" {
   count = length(var.subnet_public.subnets)
-  vpc   = true
+  domain = "vpc"
   tags = merge(
-    var.common_tags,
+    var.tags,
     {
-      Name = "${var.common_tags.customer} EIP ${var.subnet_public.subnets[count.index].az} ${var.common_tags.environment}"
+      Name = "${var.customer} EIP ${var.subnet_public.subnets[count.index].az} ${var.environment}"
     }
   )
 }
@@ -49,7 +51,7 @@ resource "aws_nat_gateway" "gateway" {
   count         = length(var.subnet_public.subnets)
   allocation_id = aws_eip.nat_ip[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
-  tags = merge(var.common_tags, {
+  tags = merge(var.tags, {
     Name = "NAT Gateway ${var.subnet_public.subnets[count.index].az}"
   })
 }
@@ -65,7 +67,7 @@ resource "aws_subnet" "public" {
   cidr_block              = var.subnet_public.subnets[count.index].cidr
   map_public_ip_on_launch = true
   tags = merge(
-    var.common_tags,
+    var.tags,
     {
       Name = "Public Subnet ${var.subnet_public.subnets[count.index].az}"
     }
@@ -79,7 +81,7 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.gateway.id
   }
   tags = merge(
-    var.common_tags,
+    var.tags,
     {
       Name = "Route Table Public"
     }
@@ -102,7 +104,7 @@ resource "aws_subnet" "private" {
   availability_zone = var.subnet_private.subnets[count.index].az
   cidr_block        = var.subnet_private.subnets[count.index].cidr
   tags = merge(
-    var.common_tags,
+    var.tags,
     {
       Name = "Private Subnet ${var.subnet_private.subnets[count.index].az}"
     }
@@ -117,7 +119,7 @@ resource "aws_route_table" "private" {
     nat_gateway_id = aws_nat_gateway.gateway[count.index].id
   }
   tags = merge(
-    var.common_tags,
+    var.tags,
     {
       Name = "Route Table Private ${var.subnet_private.subnets[count.index].az}"
     }

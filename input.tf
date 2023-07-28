@@ -40,10 +40,20 @@ variable "subnet_private" {
   })
 }
 
+variable "customer" {
+  type        = string
+  default     = ""
+}
+
+variable "environment" {
+  type        = string
+  default     = ""
+}
+
 # ============================================================
-## Variables para NAT Gateway
+## Variables para Tags
 # ============================================================
 
-variable "common_tags" {
+variable "tags" {
   type = map(any)
 }
