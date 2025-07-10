@@ -26,3 +26,14 @@ Este módulo genera una red completa con subred privada/pública, internet gatew
 | ------- | ------------------------------------------------------------------------------------------- |
 | cidr    | CIDR principal de la subred privada                                                         |
 | subnets | Lista de objetos que definen CIDR (cidr) y zóna de disponibilidad (az) de la subred privada |
+
+## Outputs
+
+| Nombre           | Descripción                                                    |
+| ---------------- | -------------------------------------------------------------- |
+| vpc_id           | VPC ID por región                                              |
+| vpc_cidr_block   | Bloque CIDR de la VPC por región                               |
+| subnet_private_id | ID de Subnet Privada por región y zona de disponibilidad       |
+| subnet_public_id | ID de Subnet Pública por región y zona de disponibilidad       |
+| vpc_az_names     | Nombres de las zonas de disponibilidad                         |
+| route_table_id   | ID de la Tabla de Rutas Privada por región y zona de disponibilidad |

@@ -21,3 +21,8 @@ output "subnet_public_id" {
 output "vpc_az_names" {
   value = var.subnet_private.subnets[*].az
 }
+
+output "route_table_id" {
+  value       = aws_route_table.private[*].id
+  description = "Private Route Table ID by region and availability zone"
+}
