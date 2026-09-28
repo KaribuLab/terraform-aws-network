@@ -12,6 +12,7 @@ Este módulo genera una red completa con subred privada/pública, internet gatew
 | [subnet_public](#subnet_public)   | Objeto que define las subredes públicas y sus zonas de disponibilidad |
 | [subnet_private](#subnet_private) | Objeto que define las subredes públicas y sus zonas de disponibilidad |
 | tags                              | Map con tags comunes a todos los recursos creados por este módulo     |
+| single_nat_gateway                | Si es `true`, crea un solo NAT Gateway compartido por todas las subredes privadas (Opcional, default `false`) |
 
 ### subnet_public
 
