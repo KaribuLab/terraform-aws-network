@@ -3,10 +3,10 @@
 # ============================================================
 
 resource "aws_vpc" "network" {
-  cidr_block = var.vpc_cidr
-  tags       = var.tags
+  cidr_block           = var.vpc_cidr
+  tags                 = var.tags
   enable_dns_hostnames = true
-  enable_dns_support =  true
+  enable_dns_support   = true
 }
 
 # ============================================================
@@ -27,8 +27,12 @@ resource "aws_internet_gateway" "gateway" {
 ## Creación de NAT Gateway 
 # ============================================================
 
+locals {
+  nat_gateway_count = var.single_nat_gateway ? 1 : length(var.subnet_public.subnets)
+}
+
 resource "aws_eip" "nat_ip" {
-  count = length(var.subnet_public.subnets)
+  count  = local.nat_gateway_count
   domain = "vpc"
   tags = merge(
     var.tags,
@@ -38,7 +42,7 @@ resource "aws_eip" "nat_ip" {
   )
 }
 resource "aws_nat_gateway" "gateway" {
-  count         = length(var.subnet_public.subnets)
+  count         = local.nat_gateway_count
   allocation_id = aws_eip.nat_ip[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
   tags = merge(var.tags, {
@@ -106,7 +110,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.network.id
   route {
     cidr_block     = var.subnet_private.cidr
-    nat_gateway_id = aws_nat_gateway.gateway[count.index].id
+    nat_gateway_id = aws_nat_gateway.gateway[var.single_nat_gateway ? 0 : count.index].id
   }
   tags = merge(
     var.tags,
